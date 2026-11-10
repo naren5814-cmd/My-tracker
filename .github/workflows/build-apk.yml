@@ -1,0 +1,49 @@
+
+name: Build TNPSC Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Extract project
+        run: |
+          mkdir extracted
+          unzip -q tnpsc_study_tracker_android_source.zip -d extracted
+
+      - name: Build APK
+        run: |
+          PUBSPEC=$(find extracted -name pubspec.yaml -print -quit)
+          if [ -z "$PUBSPEC" ]; then
+            echo "Flutter project not found"
+            exit 1
+          fi
+          cd "$(dirname "$PUBSPEC")"
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TNPSC-Study-Tracker-APK
+          path: extracted/**/build/app/outputs/flutter-apk/app-release.apk
