@@ -34,12 +34,20 @@ jobs:
       - name: Build APK
         run: |
           PUBSPEC=$(find extracted -name pubspec.yaml -print -quit)
+
           if [ -z "$PUBSPEC" ]; then
             echo "Flutter project not found"
             exit 1
           fi
+
           cd "$(dirname "$PUBSPEC")"
+
+          rm -rf android
+
+          flutter create --platforms=android .
+
           flutter pub get
+
           flutter build apk --release
 
       - name: Upload APK
@@ -47,3 +55,4 @@ jobs:
         with:
           name: TNPSC-Study-Tracker-APK
           path: extracted/**/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
