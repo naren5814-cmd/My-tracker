@@ -63,6 +63,7 @@ jobs:
 
           # 5. Build
           flutter pub get
+          dart run flutter_launcher_icons
           flutter build apk --release
           mkdir -p "$GITHUB_WORKSPACE/out"
           cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/out/"
