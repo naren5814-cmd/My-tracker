@@ -50,7 +50,9 @@ jobs:
               if "isCoreLibraryDesugaringEnabled" not in s:
                   s = re.sub(r"compileOptions\s*\{", "compileOptions {\n        isCoreLibraryDesugaringEnabled = true", s, count=1)
                   s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
-                  open(kts, "w").write(s)
+              if "isMinifyEnabled" not in s:
+                  s = re.sub(r"release\s*\{", "release {\n            isMinifyEnabled = false\n            isShrinkResources = false", s, count=1)
+              open(kts, "w").write(s)
           elif os.path.exists(grv):
               s = open(grv).read()
               if "coreLibraryDesugaringEnabled" not in s:
